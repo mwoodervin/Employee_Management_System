@@ -30,13 +30,13 @@ function start() {
             name: "view",
             message: "Select a manager",
             choices: [{
-                name: "Mary",
+                name: "Mary Ervin",
                 value: "Manager", 
-                short: "MWE"}, 
+                short: "Mary"}, 
                 {
-                name: "Miriam", 
+                name: "Miriam Ervin", 
                 value: "Manager", 
-                short: "MRE"}],
+                short: "Miriam"}],
             when: (answers) => answers.action === "VIEW employees by manager"
         }
     ]);

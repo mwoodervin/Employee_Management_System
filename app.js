@@ -27,8 +27,10 @@ function start() {
                 "VIEW departments",
                 "VIEW roles",
                 "VIEW employees",
-                "UPDATE employee managers",
-                "DELETE departments",
+                "UPDATE employee role",
+                "ADD department",
+                "ADD role",
+                "ADD employee",
                 "EXIT"
             ]
 

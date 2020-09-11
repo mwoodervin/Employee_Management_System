@@ -47,6 +47,11 @@ function start() {
                     viewEmployees();
                     break;
 
+                case "EXIT":
+                    exit();
+                    break;
+
+
             }
 
         });
@@ -76,6 +81,31 @@ function viewEmployees() {
         console.table(results);
         start();
     });
+}
+
+function exit() {
+
+    return inquirer.prompt({
+        type: "list",
+        name: "restart",
+        message: "Are you sure you want to exit this Employee Management application?",
+        choices:
+            [
+                "YES - I am sure.",
+                "NO - take me back to view options."
+            ]
+
+            
+
+    })
+    .then(function(answer) {
+        if (answer.restart == "YES - I am sure.") {
+            console.log("Thank you for using this application. Good bye!");
+        }
+        else {
+        start();
+        }
+    })
 }
 
 

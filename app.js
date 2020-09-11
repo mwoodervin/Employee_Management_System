@@ -33,7 +33,6 @@ function start() {
                 "ADD employee",
                 "EXIT"
             ]
-
     })
         .then(function (answer) {
             switch (answer.action) {
@@ -49,13 +48,22 @@ function start() {
                     viewEmployees();
                     break;
 
+                case "ADD department":
+                    addDepartment();
+                    break;
+
+                case "ADD role":
+                    addRole();
+                    break;
+
+                case "ADD employee":
+                    addRole();
+                    break;
+
                 case "EXIT":
                     exit();
                     break;
-
-
             }
-
         });
 }
 
@@ -68,7 +76,7 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-    const query = "SELECT role.id, role.title, role.salary, department.name deptname FROM role LEFT JOIN department ON role.department_id = department.id";
+    const query = "SELECT role.id '', role.title, role.salary, department.name deptname FROM role LEFT JOIN department ON role.department_id = department.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -85,6 +93,61 @@ function viewEmployees() {
     });
 }
 
+function addDepartment() {
+    inquirer.prompt({
+        type: "input",
+        name: "newdept",
+        message: "What department do you want to add?"
+
+    })
+        .then(function (answers) {
+            const query = 'INSERT INTO department (name) VALUES (?)';
+            connection.query(query, answers.newdept, function (err, results) {
+                if (err) throw err;
+                console.log("department added");
+                start();
+            });
+        })
+}
+
+function addRole() {
+    connection.query("SELECT * FROM department", function (err, results) {
+        if (err) throw err;
+
+        inquirer.prompt([{
+            type: "input",
+            name: "newrole",
+            message: "What role do you want to add?"
+
+        },
+        {
+            type: "input",
+            name: "newsalary",
+            message: "What is the salary for this role?"
+        },
+        {
+            type: "list",
+            name: "roledept",
+            message: "What department is the new role in?",
+            choices: results.map(function (deptrow) {
+                return {
+                    name: deptrow.name,
+                    value: deptrow.id
+                }
+            })
+        }])
+            .then(function (answers) {
+                console.log(answers);
+                const query = 'INSERT INTO role (??) VALUES (?, ?, ?)';
+                connection.query(query, [["title", "salary", "department_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
+                    if (err) throw err;
+                    console.log("role added");
+                    start();
+                });
+            })
+    });
+}
+
 function exit() {
 
     return inquirer.prompt({
@@ -97,17 +160,15 @@ function exit() {
                 "NO - take me back to view options."
             ]
 
-            
-
     })
-    .then(function(answer) {
-        if (answer.restart == "YES - I am sure.") {
-            console.log("Thank you for using this application. Good bye!");
-        }
-        else {
-        start();
-        }
-    })
+        .then(function (answer) {
+            if (answer.restart == "YES - I am sure.") {
+                console.log("Thank you for using this application. Good bye!");
+            }
+            else {
+                start();
+            }
+        })
 }
 
 

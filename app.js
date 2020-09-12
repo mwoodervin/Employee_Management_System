@@ -1,27 +1,14 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const consoleTable = require("console.table");
+const connection = require("./connection.js");
 
-// create the connection information for the sql database
-var connection = mysql.createConnection({
-    host: "localhost",
-
-    // Your port; if not 3306
-    port: 3306,
-
-    // Your username
-    user: "root",
-
-    // Your password
-    password: "root12345",
-    database: "Employee_Management"
-});
-
+// function to start the program
 function start() {
     inquirer.prompt({
         type: "list",
         name: "action",
-        message: "What would you like to do?",
+        message: "Welcome to your Employee Manageer. \n What would you like to do?",
         choices:
             [
                 "VIEW departments",
@@ -150,7 +137,7 @@ function addRole() {
 
 function exit() {
 
-    return inquirer.prompt({
+    inquirer.prompt({
         type: "list",
         name: "restart",
         message: "Are you sure you want to exit this Employee Management application?",
@@ -170,33 +157,6 @@ function exit() {
             }
         })
 }
-
-
-
-
-
-// {
-//     type: "list",
-//     name: "managers",
-//     message: "Select a manager",
-//     choices: function() {
-//         var managerArray = [];
-//         for (var i=0; i < results.length; i++) {
-//             if (results[i].role_id === 5) {
-//                 managerArray.push(results[i].first_name);
-//             }
-//         } 
-//         return(managerArray);
-//     },
-//     when: (answers) => answers.action === "VIEW employees by manager"
-// }
-
-
-
-// connect to the mysql server and sql database
-connection.connect(function (err) {
-    if (err) throw err;
-    // run the start function after the connection is made to prompt the user
+    // call the start function 
     start();
-});
 

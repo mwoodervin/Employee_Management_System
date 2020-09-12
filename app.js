@@ -8,7 +8,7 @@ function start() {
     inquirer.prompt({
         type: "list",
         name: "action",
-        message: "Welcome to your Employee Manageer. \n What would you like to do?",
+        message: "Welcome to your Employee Manageer. \n What would you like to do? \n",
         choices:
             [
                 "VIEW departments",
@@ -63,7 +63,7 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-    const query = "SELECT roles.id id, roles.title, roles.salary, department.dept_name deptname FROM roles LEFT JOIN department ON roles.department_id = department.id";
+    const query = "SELECT roles.id ID, roles.title Title, roles.salary Base Salary, department.dept_name Department FROM roles LEFT JOIN department ON roles.department_id = department.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -72,7 +72,7 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-    const query = "SELECT employee.id, concat(employee.first_name, ' ', employee.last_name) employee, roles.title role FROM employee LEFT JOIN roles ON employee.role_id = role.id";
+    const query = "SELECT employee.id ID, concat(employee.first_name, ' ', employee.last_name) Employee, roles.title Role FROM employee LEFT JOIN roles ON employee.role_id = roles.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.table(results);

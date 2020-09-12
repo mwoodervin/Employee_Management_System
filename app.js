@@ -63,7 +63,7 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-    const query = "SELECT role.id '', role.title, role.salary, department.name deptname FROM role LEFT JOIN department ON role.department_id = department.id";
+    const query = "SELECT roles.id '', roles.title, roles.salary, department.dept_name deptname FROM roles LEFT JOIN department ON roles.department_id = department.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -72,7 +72,7 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-    const query = "SELECT employee.id, concat(employee.first_name, ' ', employee.last_name) employee, role.title role FROM employee LEFT JOIN role ON employee.role_id = role.id";
+    const query = "SELECT employee.id, concat(employee.first_name, ' ', employee.last_name) employee, roles.title role FROM employee LEFT JOIN roles ON employee.role_id = role.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.table(results);

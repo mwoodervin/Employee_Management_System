@@ -192,8 +192,6 @@ async function getManager() {
 function getNewEmployee() {
         connection.query("SELECT * FROM employee", async function (err, results) {
             try {
-            // if (err) throw err;
-
             const newName = await
                 inquirer.prompt([{
                     type: "input",
@@ -222,10 +220,36 @@ function getNewEmployee() {
                             }
                         })
                     }]);
-
                 } catch(err) {
                     console.log(err);
                 }
+                connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", async function (err, mgrresults) {
+                    try {
+                        const newManager = await inquirer.prompt([{
+                        type: "list",
+                        name: "newempmgr",
+                        message: "Who is the employee's manager?",
+                        choices: mgrresults.map(function (mgrrow) {
+                            return {
+                                name: `${mgrrow.first_name} ${mgrrow.last_name}`,
+                                value: mgrrow.manager_id
+                            }
+                        })
+                    }])
+                        // .then(function (answers) {
+                        //     console.log(answers);
+                        //     const query = 'INSERT INTO employee (??) VALUES (?, ?, ?, ?)';
+                        //     connection.query(query, [["first_name", "last_name", "role_id", "manager_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
+                        //         if (err) throw err;
+                        //         console.log("role added");
+                        //         start();
+                        //     });
+                        // });
+                    } catch(err) {
+                        console.log(err);
+                    }
+                });
+        
             });
             // {
             //     connection.query("SELECT * FROM roles", function (err, roleresults) {

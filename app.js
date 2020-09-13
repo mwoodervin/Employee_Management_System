@@ -11,8 +11,8 @@ function startscreen() {
     
     *************************************************
     *   WELCOME TO THE EMPLOYEE MANAGEMENT APP      *
-    * 
-    *          SELECT AND OPTION TO BEGIN           *
+    *                                               *
+    *          SELECT AN OPTION TO BEGIN            *
     *   OR SELECT -EXIT- TO EXIT THE APPLICATION    *
     *************************************************
     

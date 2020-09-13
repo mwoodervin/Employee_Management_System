@@ -55,7 +55,7 @@ function start() {
 }
 
 function viewDepartments() {
-    console.log('\n----- VIEW DEPARTMENTS -----\n')
+    console.log('\n-----  DEPARTMENTS -----')
     connection.query("SELECT * FROM department", function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -64,7 +64,7 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-    console.log('\n----- VIEW ROLES -----\n')
+    console.log('\n----- ROLES -----')
     const query = "SELECT roles.id ID, roles.title Title, roles.salary Base Salary, department.dept_name Department FROM roles LEFT JOIN department ON roles.department_id = department.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
@@ -74,7 +74,7 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-    console.log('\n----- VIEW EMPLOYEES -----\n')
+    console.log('\n----- EMPLOYEES -----')
     const query = "SELECT employee.id ID, concat(employee.first_name, ' ', employee.last_name) Employee, roles.title Role FROM employee LEFT JOIN roles ON employee.role_id = roles.id";
     connection.query(query, function (err, results) {
         if (err) throw err;

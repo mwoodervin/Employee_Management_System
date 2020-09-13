@@ -1,10 +1,13 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const consoleTable = require("console.table");
-const connection = require("./connection.js");
+const connection = require("./functions/connection.js");
+const functions = require("./functions/functions.js");
+const startscreen = require("./functions/startscreen.js");
 
-// function to start the program
+// start function with switch cases for actions
 function start() {
+    // startscreen();
     inquirer.prompt({
         type: "list",
         name: "action",
@@ -44,14 +47,20 @@ function start() {
                     break;
 
                 case "ADD employee":
-                    getNewEmployee();
+                    addNewEmployee();
                     break;
+
+                case "UPDATE employee role":
+                    updateEmployeeRole();
+                    break;
+
 
                 case "EXIT":
                     exit();
                     break;
             }
         });
+
 }
 
 function viewDepartments() {
@@ -137,10 +146,36 @@ function addRole() {
             })
     });
 }
-function getNewEmployee() {
+
+function updateEmployeeRole() {
+    const query = "SELECT * FROM employee LEFT JOIN roles ON employee.role_id = roles.id";
+    connection.query(query, async function (err, results) {
+        try {
+            const employeeToChange = await inquirer.prompt([{
+
+                type: "list",
+                name: "changerole",
+                message: "Whose role do you want to change?",
+                choices: results.map(function (employeerow) {
+                    return {
+                        name: `${employeerow.first_name} ${employeerow.last_name}`,
+                        value: employeerow.role_id
+                    }
+                })
+            }]);
+
+        } catch (err) {
+            console.log(err);
+        }
+        // start();
+    });
+}
+
+
+function addNewEmployee() {
     let newEmployeeInfo = [];
-        connection.query("SELECT * FROM employee", async function (err, results) {
-            try {
+    connection.query("SELECT * FROM employee", async function (err, results) {
+        try {
             const newName = await
                 inquirer.prompt([{
                     type: "input",
@@ -152,15 +187,15 @@ function getNewEmployee() {
                     name: "lastname",
                     message: "What is the employee's last name?"
                 }])
-                .then(function (answers) {
-                    newEmployeeInfo.push(answers.firstname, answers.lastname);
-                    console.log(`with names ${newEmployeeInfo}`);
+                    .then(function (answers) {
+                        newEmployeeInfo.push(answers.firstname, answers.lastname);
+                        console.log(`with names ${newEmployeeInfo}`);
                     });
-            } catch(err) {
-                console.log(err);
-            }
-            connection.query("SELECT * FROM roles", async function (err, roleresults) {
-                try {
+        } catch (err) {
+            console.log(err);
+        }
+        connection.query("SELECT * FROM roles", async function (err, roleresults) {
+            try {
                 const newRole = await
                     inquirer.prompt([{
                         type: "list",
@@ -173,16 +208,16 @@ function getNewEmployee() {
                             }
                         })
                     }])
-                    .then(function (answers) {
-                        newEmployeeInfo.push(answers.newemprole);
-                        console.log(`with role ${newEmployeeInfo}`);
-                    });
-                } catch(err) {
-                    console.log(err);
-                }
-                connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", async function (err, mgrresults) {
-                    try {
-                        const newManager = await inquirer.prompt([{
+                        .then(function (answers) {
+                            newEmployeeInfo.push(answers.newemprole);
+                            console.log(`with role ${newEmployeeInfo}`);
+                        });
+            } catch (err) {
+                console.log(err);
+            }
+            connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", async function (err, mgrresults) {
+                try {
+                    const newManager = await inquirer.prompt([{
                         type: "list",
                         name: "newempmgr",
                         message: "Who is the employee's manager?",
@@ -203,12 +238,12 @@ function getNewEmployee() {
                                 start();
                             });
                         });
-                    } catch(err) {
-                        console.log(err);
-                    }
-                });
+                } catch (err) {
+                    console.log(err);
+                }
             });
         });
+    });
 }
 
 // function for EXIT option
@@ -236,6 +271,7 @@ function exit() {
 }
 
 
-// }
 // call the start function 
 start();
+
+module.exports = "./app.js"

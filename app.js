@@ -8,7 +8,7 @@ function start() {
     inquirer.prompt({
         type: "list",
         name: "action",
-        message: "Welcome to your Employee Manageer. \n What would you like to do? \n",
+        message: "Welcome to your Employee Manager. \n What would you like to do? \n",
         choices:
             [
                 "VIEW departments",
@@ -137,59 +137,8 @@ function addRole() {
             })
     });
 }
-// async function getRole() {
-//     try {
-//         connection.query("SELECT * FROM roles", async function (err, roleresults) {
-
-//             inquirer.prompt([{
-//                 type: "list",
-//                 name: "newemprole",
-//                 message: "What is the employee's role?",
-//                 choices: roleresults.map(function (rolerow) {
-//                     return {
-//                         name: rolerow.title,
-//                         value: rolerow.id
-//                     }
-//                 })
-//             }]).then(getManager());
-//         })
-//     }
-//     catch (err) {
-//         console.log(err);
-//     }
-// }
-
-async function getManager() {
-    try {
-        connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", function (err, mgrresults) {
-            inquirer.prompt([{
-                type: "list",
-                name: "newempmgr",
-                message: "Who is the employee's manager?",
-                choices: mgrresults.map(function (mgrrow) {
-                    return {
-                        name: `${mgrrow.first_name} ${mgrrow.last_name}`,
-                        value: mgrrow.manager_id
-                    }
-                })
-            }])
-                .then(function (answers) {
-                    console.log(answers);
-                    const query = 'INSERT INTO roles (??) VALUES (?, ?, ?)';
-                    connection.query(query, [["title", "salary", "department_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
-                        if (err) throw err;
-                        console.log("role added");
-                        start();
-                    });
-                });
-        });
-        // }])
-    } catch (err) {
-        console.log(err);
-    }
-}
-
 function getNewEmployee() {
+    let newEmployeeInfo = [];
         connection.query("SELECT * FROM employee", async function (err, results) {
             try {
             const newName = await
@@ -202,7 +151,11 @@ function getNewEmployee() {
                     type: "input",
                     name: "lastname",
                     message: "What is the employee's last name?"
-                }]);
+                }])
+                .then(function (answers) {
+                    newEmployeeInfo.push(answers.firstname, answers.lastname);
+                    console.log(`with names ${newEmployeeInfo}`);
+                    });
             } catch(err) {
                 console.log(err);
             }
@@ -219,7 +172,11 @@ function getNewEmployee() {
                                 value: rolerow.id
                             }
                         })
-                    }]);
+                    }])
+                    .then(function (answers) {
+                        newEmployeeInfo.push(answers.newemprole);
+                        console.log(`with role ${newEmployeeInfo}`);
+                    });
                 } catch(err) {
                     console.log(err);
                 }
@@ -236,64 +193,21 @@ function getNewEmployee() {
                             }
                         })
                     }])
-                        // .then(function (answers) {
-                        //     console.log(answers);
-                        //     const query = 'INSERT INTO employee (??) VALUES (?, ?, ?, ?)';
-                        //     connection.query(query, [["first_name", "last_name", "role_id", "manager_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
-                        //         if (err) throw err;
-                        //         console.log("role added");
-                        //         start();
-                        //     });
-                        // });
+                        .then(function (answers) {
+                            newEmployeeInfo.push(answers.newempmgr);
+                            console.log(`with manager ${newEmployeeInfo}`);
+                            const query = 'INSERT INTO employee (??) VALUES (?, ?, ?, ?)';
+                            connection.query(query, [["first_name", "last_name", "role_id", "manager_id"], newEmployeeInfo[0], newEmployeeInfo[1], newEmployeeInfo[2], newEmployeeInfo[3]], function (err, results) {
+                                if (err) throw err;
+                                console.log("A new employee has been added.");
+                                start();
+                            });
+                        });
                     } catch(err) {
                         console.log(err);
                     }
                 });
-        
             });
-            // {
-            //     connection.query("SELECT * FROM roles", function (err, roleresults) {
-            //         inquirer.prompt([{
-            //             type: "list",
-            //             name: "newemprole",
-            //             message: "What is the employee's role?",
-            //             choices: roleresults.map(function (rolerow) {
-            //                 return {
-            //                     name: rolerow.title,
-            //                     value: rolerow.id
-            //                 }
-            //             })
-            //         }]);
-            //     })
-
-            // }
-            // await getManager(); 
-            // {
-            //     connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", function (err, mgrresults) {
-            //         inquirer.prompt([{
-            //             type: "list",
-            //             name: "newempmgr",
-            //             message: "Who is the employee's manager?",
-            //             choices: mgrresults.map(function (mgrrow) {
-            //                 return {
-            //                     name: `${mgrrow.first_name} ${mgrrow.last_name}`,
-            //                     value: mgrrow.manager_id
-            //                 }
-            //             })
-            //         }]);
-            //     })
-            //     // }])
-            //     // .then(function (answers) {
-            //     //     console.log(answers);
-            //     //     const query = 'INSERT INTO roles (??) VALUES (?, ?, ?)';
-            //     //     connection.query(query, [["title", "salary", "department_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
-            //     //         if (err) throw err;
-            //     //         console.log("role added");
-            //     //         start();
-            //     //     });
-            //     // })
-            // };
-
         });
 }
 

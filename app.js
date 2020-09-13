@@ -137,27 +137,27 @@ function addRole() {
             })
     });
 }
-async function getRole() {
-    try {
-        connection.query("SELECT * FROM roles", async function (err, roleresults) {
+// async function getRole() {
+//     try {
+//         connection.query("SELECT * FROM roles", async function (err, roleresults) {
 
-            inquirer.prompt([{
-                type: "list",
-                name: "newemprole",
-                message: "What is the employee's role?",
-                choices: roleresults.map(function (rolerow) {
-                    return {
-                        name: rolerow.title,
-                        value: rolerow.id
-                    }
-                })
-            }]).then(getManager());
-        })
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
+//             inquirer.prompt([{
+//                 type: "list",
+//                 name: "newemprole",
+//                 message: "What is the employee's role?",
+//                 choices: roleresults.map(function (rolerow) {
+//                     return {
+//                         name: rolerow.title,
+//                         value: rolerow.id
+//                     }
+//                 })
+//             }]).then(getManager());
+//         })
+//     }
+//     catch (err) {
+//         console.log(err);
+//     }
+// }
 
 async function getManager() {
     try {

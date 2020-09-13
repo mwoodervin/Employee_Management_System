@@ -148,26 +148,84 @@ function addRole() {
 }
 
 function updateEmployeeRole() {
+    let updateEmployeeInfo = [];
     const query = "SELECT * FROM employee LEFT JOIN roles ON employee.role_id = roles.id";
-    connection.query(query, async function (err, results) {
+    connection.query(query, async function (err, namerow) {
         try {
             const employeeToChange = await inquirer.prompt([{
 
                 type: "list",
-                name: "changerole",
+                name: "updatename",
                 message: "Whose role do you want to change?",
-                choices: results.map(function (employeerow) {
+                choices: namerow.map(function (employeerow) {
                     return {
                         name: `${employeerow.first_name} ${employeerow.last_name}`,
-                        value: employeerow.role_id
+                        value: employeerow.last_name
                     }
                 })
-            }]);
+            }])
+                .then(function(answers) {
+                    updateEmployeeInfo.push(answers.updatename)
+                });
 
         } catch (err) {
             console.log(err);
         }
-        // start();
+        connection.query("SELECT * FROM roles", async function (err, roleresults) {
+            try {
+                const newRole = await
+                    inquirer.prompt([{
+                        type: "list",
+                        name: "changeemprole",
+                        message: "What is the employee's new role?",
+                        choices: roleresults.map(function (rolerow) {
+                            return {
+                                name: rolerow.title,
+                                value: rolerow.id
+                            }
+                        })
+                    }])
+                        .then(function (answers) {
+                            updateEmployeeInfo.push(answers.changeemprole);
+                            // const query = "INSERT INTO employee ?? VALUES ? WHERE employee.last_name = employeerow.last_name[0]";
+                            // connection.query(query, [["role_id"], answers.changeemprole], function (err, res) {
+                            //     if (err) throw err;
+                            //     console.log('The employee\'s role has been updated');
+                            // });
+                        });
+            } catch (err) {
+                console.log(err);ß
+            }
+            connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", async function (err, mgrresults) {
+                try {
+                    const newManager = await inquirer.prompt([{
+                        type: "list",
+                        name: "newempmgr",
+                        message: "Who is the employee's manager?",
+                        choices: mgrresults.map(function (mgrrow) {
+                            return {
+                                name: `${mgrrow.first_name} ${mgrrow.last_name}`,
+                                value: mgrrow.id
+                            }
+                        })
+                    }])
+                        .then(function (answers) {
+                            updateEmployeeInfo.push(answers.newempmgr);
+                            console.log(updateEmployeeInfo);
+                            const query = 'UPDATE employee SET role_id = ?, manager_id = ? WHERE last_name = ?';
+                            connection.query(query, [updateEmployeeInfo[1], updateEmployeeInfo[2], updateEmployeeInfo[0]], function (err, results) {
+                                if (err) throw err;
+                                console.log("The employee's role has been updated.");
+                                start();
+                            });
+                        });
+                } catch (err) {
+                    console.log(err);
+                }
+
+                // start();
+            });
+        });
     });
 }
 

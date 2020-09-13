@@ -1,17 +1,34 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const consoleTable = require("console.table");
-const connection = require("./functions/connection.js");
-const functions = require("./functions/functions.js");
-const startscreen = require("./functions/startscreen.js");
+const connection = require("./connections/connection.js");
 
+
+// Welcome function
+function startscreen() {
+
+    console.log(`
+    
+    *************************************************
+    *   WELCOME TO THE EMPLOYEE MANAGEMENT APP      *
+    * 
+    *          SELECT AND OPTION TO BEGIN           *
+    *   OR SELECT -EXIT- TO EXIT THE APPLICATION    *
+    *************************************************
+    
+    `)
+}
+// function to initialize application
+function init() {
+    startscreen();
+    start();
+}
 // start function with switch cases for actions
 function start() {
-    // startscreen();
     inquirer.prompt({
         type: "list",
         name: "action",
-        message: "Welcome to your Employee Manager. \n What would you like to do? \n",
+        message: "\n Please select from the following menu: \n",
         choices:
             [
                 "VIEW departments",
@@ -74,7 +91,7 @@ function viewDepartments() {
 
 function viewRoles() {
     console.log('\n----- ROLES -----')
-    const query = "SELECT roles.id ID, roles.title Title, roles.salary Base Salary, department.dept_name Department FROM roles LEFT JOIN department ON roles.department_id = department.id";
+    const query = "SELECT roles.id ID, roles.title Title, roles.salary Salary, department.dept_name Department FROM roles LEFT JOIN department ON roles.department_id = department.id";
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -100,7 +117,7 @@ function addDepartment() {
 
     })
         .then(function (answers) {
-            const query = 'INSERT INTO department (name) VALUES (?)';
+            const query = 'INSERT INTO department (dept_name) VALUES (?)';
             connection.query(query, answers.newdept, function (err, results) {
                 if (err) throw err;
                 console.log("A new department has been added.");
@@ -130,7 +147,7 @@ function addRole() {
             message: "What department is the new role in?",
             choices: results.map(function (deptrow) {
                 return {
-                    name: deptrow.name,
+                    name: deptrow.dept_name,
                     value: deptrow.id
                 }
             })
@@ -211,7 +228,6 @@ function updateEmployeeRole() {
                     }])
                         .then(function (answers) {
                             updateEmployeeInfo.push(answers.newempmgr);
-                            console.log(updateEmployeeInfo);
                             const query = 'UPDATE employee SET role_id = ?, manager_id = ? WHERE last_name = ?';
                             connection.query(query, [updateEmployeeInfo[1], updateEmployeeInfo[2], updateEmployeeInfo[0]], function (err, results) {
                                 if (err) throw err;
@@ -247,7 +263,6 @@ function addNewEmployee() {
                 }])
                     .then(function (answers) {
                         newEmployeeInfo.push(answers.firstname, answers.lastname);
-                        console.log(`with names ${newEmployeeInfo}`);
                     });
         } catch (err) {
             console.log(err);
@@ -329,7 +344,7 @@ function exit() {
 }
 
 
-// call the start function 
-start();
+// call the init function 
+init();
 
 module.exports = "./app.js"

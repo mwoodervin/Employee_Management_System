@@ -44,7 +44,7 @@ function start() {
                     break;
 
                 case "ADD employee":
-                    addRole();
+                    addEmployee();
                     break;
 
                 case "EXIT":
@@ -125,7 +125,7 @@ function addRole() {
         }])
             .then(function (answers) {
                 console.log(answers);
-                const query = 'INSERT INTO role (??) VALUES (?, ?, ?)';
+                const query = 'INSERT INTO roles (??) VALUES (?, ?, ?)';
                 connection.query(query, [["title", "salary", "department_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
                     if (err) throw err;
                     console.log("role added");
@@ -135,28 +135,86 @@ function addRole() {
     });
 }
 
+function addEmployee() {
+    connection.query("SELECT * FROM employee", function (err, results) {
+        if (err) throw err;
+
+        inquirer.prompt([{
+            type: "input",
+            name: "firstname",
+            message: "What is the employee's first name?"
+        },
+        {
+            type: "input",
+            name: "lastname",
+            message: "What is the employee's last name?"
+        }])
+            // .then(function () {
+            //     connection.query("SELECT * FROM roles", function (err, roleresults) {
+            //         inquirer.prompt([{
+            //             type: "list",
+            //             name: "newemprole",
+            //             message: "What is the employee's role?",
+            //             choices: roleresults.map(function (rolerow) {
+            //                 return {
+            //                     name: rolerow.title,
+            //                     value: rolerow.id
+            //                 }
+            //             })
+            //         }]);
+            //     })
+            // })
+            .then(function () {
+                connection.query("SELECT * FROM employee WHERE manager_id IS NULL ", function (err, mgrresults) {
+                    console.log(mgrresults);
+                    inquirer.prompt([{
+                        type: "list",
+                        name: "newempmgr",
+                        message: "Who is the employee's manager?",
+                        choices: mgrresults.map(function (mgrrow) {
+                            return {
+                                name: `${mgrrow.first_name} ${mgrrow.last_name}`,
+                                value: mgrrow.manager_id
+                            }
+                        })
+                    }]);
+                })
+                // }])
+                // .then(function (answers) {
+                //     console.log(answers);
+                //     const query = 'INSERT INTO roles (??) VALUES (?, ?, ?)';
+                //     connection.query(query, [["title", "salary", "department_id"], answers.newrole, answers.newsalary, answers.roledept], function (err, results) {
+                //         if (err) throw err;
+                //         console.log("role added");
+                //         start();
+                //     });
+                // })
+            });
+    });
+
+}
 function exit() {
 
-    inquirer.prompt({
-        type: "list",
-        name: "restart",
-        message: "Are you sure you want to exit this Employee Management application?",
-        choices:
-            [
-                "YES - I am sure.",
-                "NO - take me back to view options."
-            ]
+            inquirer.prompt({
+                type: "list",
+                name: "restart",
+                message: "Are you sure you want to exit this Employee Management application?",
+                choices:
+                    [
+                        "YES - I am sure.",
+                        "NO - take me back to view options."
+                    ]
 
-    })
-        .then(function (answer) {
-            if (answer.restart == "YES - I am sure.") {
-                console.log("Thank you for using this application. Good bye!");
-            }
-            else {
-                start();
-            }
-        })
-}
-    // call the start function 
-    start();
+            })
+                .then(function (answer) {
+                    if (answer.restart == "YES - I am sure.") {
+                        console.log("Thank you for using this application. Good bye!");
+                    }
+                    else {
+                        start();
+                    }
+                })
+        }
+// call the start function 
+start();
 
